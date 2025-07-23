@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'meal_plan_screen.dart';
 
 class UserPreferencesScreen extends StatefulWidget {
   const UserPreferencesScreen({super.key});
@@ -81,9 +82,14 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: selectedGoal != null ? () {
-                  // TODO: Save preferences and navigate to meal plan
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Preferences saved!')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MealPlanScreen(
+                        goal: selectedGoal!,
+                        restrictions: selectedRestrictions,
+                      ),
+                    ),
                   );
                 } : null,
                 style: ElevatedButton.styleFrom(
