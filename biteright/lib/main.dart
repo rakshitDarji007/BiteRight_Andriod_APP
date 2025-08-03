@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import 'user_preferences_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
   runApp(const BiteRightApp());
 }
 
+final supabase = Supabase.instance.client;
 class BiteRightApp extends StatelessWidget {
   const BiteRightApp({super.key});
 
@@ -17,7 +23,7 @@ class BiteRightApp extends StatelessWidget {
     return MaterialApp(
       title: 'BiteRight',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -46,23 +52,20 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Your personalized meal planning app',
-              style: TextStyle(fontSize: 16),
+              'Your personalized meal planning app.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UserPreferencesScreen(),
-                  ),
-                );
+                
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                textStyle: const TextStyle(fontSize: 16),
               ),
               child: const Text('Get Started'),
             ),
