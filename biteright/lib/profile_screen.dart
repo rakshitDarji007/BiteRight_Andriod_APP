@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main.dart';
@@ -77,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => MealPlanScreen(
-                          mealPlanJson: plan['plan_content'],
+                          mealPlanJson: jsonEncode(plan['plan_content']),
                           goal: goal,
                           restrictions: restrictions,
                         ),

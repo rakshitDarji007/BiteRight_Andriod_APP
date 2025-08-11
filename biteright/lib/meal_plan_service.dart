@@ -9,12 +9,12 @@ class MealPlanService {
     required String goal,
     required List<String> restrictions,
   }) async {
+    print('Using Gemini API Key $_apiKey');
     if (_apiKey == null) {
       throw Exception('API key is not configured');
     }
     final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-latest:generateContent?hey=$_apiKey'
-    );
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$_apiKey');
 
     final prompt = """
     Generate a 3-day meal plan for a person whose goal is to '$goal'.

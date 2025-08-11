@@ -14,14 +14,14 @@ class MealPlanScreen extends StatelessWidget {
     required this.restrictions,
   });
 
-  Future<void> _saveMealPlan(BuildContext context) async {
+  Future<void> _saveMealPlan(BuildContext context, String jsonToSave) async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) throw Exception("User not logged in");
 
       await supabase.from('meal_plans').insert({
         'user_id': user.id,
-        'plan_content': jsonDecode(mealPlanJson),
+        'plan_content': jsonDecode(jsonToSave),
         'goal': goal,
         'dietary_restrictions': restrictions,
       });
@@ -42,7 +42,10 @@ class MealPlanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> mealPlan = jsonDecode(mealPlanJson);
+    final startIndex = mealPlanJson.indexOf('{');
+    final endIndex = mealPlanJson.lastIndexOf('}');
+    final cleanedJson = mealPlanJson.substring(startIndex, endIndex + 1);
+    final Map<String, dynamic> mealPlan = jsonDecode(cleanedJson);
     final days = mealPlan.keys.toList();
 
     return Scaffold(
@@ -53,7 +56,7 @@ class MealPlanScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => _saveMealPlan(context),
+            onPressed: () => _saveMealPlan(context, cleanedJson),
             tooltip: 'Save Plan',
           ),
         ],
@@ -108,7 +111,7 @@ class MealPlanScreen extends StatelessWidget {
 class _MealDetail extends StatelessWidget {
   final String mealName;
   final String description;
-  final int calories;
+  final dynamic calories;
 
   const _MealDetail({
     required this.mealName,
