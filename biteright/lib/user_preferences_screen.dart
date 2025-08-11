@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main.dart';
+import 'meal_plan_service.dart';
+import 'meal_plan_screen.dart';
+import 'profile_screen.dart';
 
 class UserPreferencesScreen extends StatefulWidget {
   const UserPreferencesScreen({super.key});
@@ -33,10 +36,18 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
     'Nut-Free'
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _getInitialPreferences();
+  }
+
   Future<void> _getInitialPreferences() async {
-    setState(() {
-      _isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
 
     try {
       final userId = supabase.auth.currentUser!.id;
@@ -46,7 +57,7 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
           .eq('id', userId)
           .single();
 
-      if (response != null) {
+      if (mounted && response != null) {
         setState(() {
           _selectedGoal = response['goal'] as String?;
           final restrictions = response['dietary_restrictions'] as List?;
@@ -57,7 +68,7 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
         });
       }
     } catch (error) {
-
+      
     } finally {
       if (mounted) {
         setState(() {
@@ -67,13 +78,7 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _getInitialPreferences();
-  }
-
-  Future<void> _savePreferences() async {
+  Future<void> _savePreferencesAndGeneratePlan() async {
     final user = supabase.auth.currentUser;
     if (user == null || _selectedGoal == null) {
       return;
@@ -91,47 +96,63 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
         'updated_at': DateTime.now().toIso8601String(),
       });
 
+      if (!mounted) return;
+
+      final mealPlanService = MealPlanService();
+      final planJson = await mealPlanService.generateMealPlan(
+        goal: _selectedGoal!,
+        restrictions: _selectedRestrictions,
+      );
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Preferences saved!')),
-        );
-      }
-    } on PostgrestException catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message),
-            backgroundColor: Theme.of(context).colorScheme.error,
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MealPlanScreen(
+            mealPlanJson: planJson,
+            goal: _selectedGoal!,
+            restrictions: _selectedRestrictions,
           ),
-        );
+        ));
       }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Sorry, unexpected error occurred.'),
+            content: Text('Error: ${error.toString()}'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
-    }
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+    } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final showInitialLoading = _isLoading && _selectedGoal == null;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Preferences'),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
       ),
-      body: _isLoading && _selectedGoal == null
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          );
+        },
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.person),
+        tooltip: 'My Saved Plans',
+      ),
+      body: showInitialLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
@@ -182,7 +203,7 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed:
-                          _selectedGoal == null || _isLoading ? null : _savePreferences,
+                          _selectedGoal == null || _isLoading ? null : _savePreferencesAndGeneratePlan,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
@@ -196,7 +217,7 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
                                 strokeWidth: 3,
                                 color: Colors.white,
                               ))
-                          : const Text('Save Preferences'),
+                          : const Text('Generate New Meal Plan'),
                     ),
                   ),
                 ],
