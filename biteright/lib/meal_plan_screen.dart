@@ -6,12 +6,14 @@ class MealPlanScreen extends StatelessWidget {
   final String mealPlanJson;
   final String goal;
   final List<String> restrictions;
+  final bool isFromSavedPlans;
 
   const MealPlanScreen({
     super.key,
     required this.mealPlanJson,
     required this.goal,
     required this.restrictions,
+    this.isFromSavedPlans = false,
   });
 
   Future<void> _saveMealPlan(BuildContext context, String jsonToSave) async {
@@ -54,11 +56,12 @@ class MealPlanScreen extends StatelessWidget {
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () => _saveMealPlan(context, cleanedJson),
-            tooltip: 'Save Plan',
-          ),
+          if (!isFromSavedPlans)
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: () => _saveMealPlan(context, cleanedJson),
+              tooltip: 'Save Plan',
+            ),
         ],
       ),
       body: ListView.builder(
