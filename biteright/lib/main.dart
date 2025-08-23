@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'auth_screen.dart';
-import 'user_preferences_screen.dart';
+import 'main_layout.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +52,7 @@ class _SplashPageState extends State<SplashPage> {
       final session = data.session;
       if (session != null) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const UserPreferencesScreen()),
+          MaterialPageRoute(builder: (context) => const MainLayout()),
         );
       } else {
         Navigator.of(context).pushReplacement(
@@ -82,46 +82,48 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BiteRight'),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to BiteRight!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                'Your personalized meal planning app.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(
+                Icons.restaurant_menu,
+                size: 80,
+                color: Colors.green,
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Welcome to BiteRight!',
                 textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                textStyle: const TextStyle(fontSize: 16),
+              const SizedBox(height: 10),
+              const Text(
+                'Your personalized AI meal planning app.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              child: const Text('Get Started'),
-            ),
-          ],
+              const SizedBox(height: 50),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AuthScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
+                child: const Text('Get Started'),
+              ),
+            ],
+          ),
         ),
       ),
     );

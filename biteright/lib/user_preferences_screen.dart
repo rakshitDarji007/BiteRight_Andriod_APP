@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main.dart';
 import 'meal_plan_service.dart';
 import 'meal_plan_screen.dart';
-import 'profile_screen.dart';
+
 
 class UserPreferencesScreen extends StatefulWidget {
   const UserPreferencesScreen({super.key});
@@ -68,7 +68,7 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
         });
       }
     } catch (error) {
-      
+      // No-op.
     } finally {
       if (mounted) {
         setState(() {
@@ -137,20 +137,9 @@ class _UserPreferencesScreenState extends State<UserPreferencesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Preferences'),
+        title: const Text('Generate a New Plan'),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const ProfileScreen()),
-          );
-        },
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.person),
-        tooltip: 'My Saved Plans',
       ),
       body: showInitialLoading
           ? const Center(child: CircularProgressIndicator())

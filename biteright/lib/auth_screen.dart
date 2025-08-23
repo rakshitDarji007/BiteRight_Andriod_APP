@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main.dart';
-import 'user_preferences_screen.dart';
+import 'main_layout.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -39,7 +39,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const UserPreferencesScreen()),
+          MaterialPageRoute(builder: (context) => const MainLayout()),
           (route) => false,
         );
       }
@@ -84,7 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Success! Check your email for a confirmation link.'),
+            content: Text('Success! Please sign in.'),
           ),
         );
         Navigator.of(context).pop();
@@ -99,7 +99,7 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     } catch (error) {
-      if (mounted) {
+       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('An unexpected error occurred.'),
@@ -145,7 +145,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   controller: _passwordController,
                   decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
-                  validator: (value) {
+                   validator: (value) {
                     if (value == null || value.isEmpty || value.length < 6) {
                       return 'Password must be at least 6 characters long';
                     }
@@ -160,16 +160,19 @@ class _AuthScreenState extends State<AuthScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ElevatedButton(
-                          onPressed: _signIn,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text('Sign In')),
+                        onPressed: _signIn,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text('Sign In')
+                      ),
                       const SizedBox(height: 10),
                       OutlinedButton(
-                          onPressed: _signUp, child: const Text('Sign Up')),
+                        onPressed: _signUp,
+                        child: const Text('Sign Up')
+                      ),
                     ],
                   ),
               ],
